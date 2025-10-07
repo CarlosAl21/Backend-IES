@@ -196,7 +196,9 @@ async resetPasswordWithToken(token: string, newPassword: string) {
       if (!user) {
         throw new NotFoundException('Usuario no encontrado');
       }
-      await this.userRepository.delete(id);
+      user.isActive = false;
+      await this.userRepository.save(user);
+      return { message: 'Usuario eliminado correctamente' };
     } catch (error) {
       console.error('Error al eliminar el usuario:', error);
       if (error instanceof NotFoundException) {

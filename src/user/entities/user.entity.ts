@@ -48,6 +48,9 @@ export class User {
   @Column('boolean', { default: false })
   isAdmin: boolean;
 
+  @Column('boolean', { default: false })
+  isSuperAdmin: boolean;
+
   @Column({ nullable: true })
   resetPasswordToken?: string | null;
 

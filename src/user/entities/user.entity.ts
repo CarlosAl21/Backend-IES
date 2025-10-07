@@ -1,5 +1,6 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { InstitucionFinanciera } from 'src/institucion-financiera/entities/institucion-financiera.entity';
 
 @Entity()
 export class User {
@@ -65,6 +66,12 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @ManyToOne(() => InstitucionFinanciera, (institucion) => institucion.users, { eager: true, nullable: true })
+  @JoinColumn({ name: 'idInstitucionFinanciera' })
+  idInstitucionFinanciera: InstitucionFinanciera;
+
+
 
   @BeforeInsert()
   async hashPassword() {

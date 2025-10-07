@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { InstitucionFinanciera } from 'src/institucion-financiera/entities/institucion-financiera.entity';
 
 @Injectable()
 export class UserService {
@@ -12,6 +13,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(InstitucionFinanciera)
+    private readonly institucionFinancieraRepository: Repository<InstitucionFinanciera>,
   ) {}
 
   private validarCedulaEcuador(cedula: string): boolean {
@@ -95,7 +98,20 @@ async resetPasswordWithToken(token: string, newPassword: string) {
       if (createUserDto.phone && !this.validarTelefonoEcuador(createUserDto.phone)) {
         throw new BadRequestException('El teléfono no es válido');
       }
-      const nuevoUsuario = this.userRepository.create(createUserDto);
+
+      if (createUserDto.idInstitucionFinanciera) {
+        const institucion = await this.institucionFinancieraRepository.findOneBy({ idInstitucionFinanciera: createUserDto.idInstitucionFinanciera });
+        if (!institucion) {
+          throw new NotFoundException('Institución financiera no encontrada');
+        }
+      // Crear un objeto sin la propiedad idInstitucionFinanciera
+      const { idInstitucionFinanciera, ...userData } = createUserDto;
+      const nuevoUsuario = this.userRepository.create(userData);
+      nuevoUsuario.idInstitucionFinanciera = institucion;
+      return await this.userRepository.save(nuevoUsuario);
+      }
+      const { idInstitucionFinanciera, ...userData } = createUserDto;
+      const nuevoUsuario = this.userRepository.create(userData);
       return await this.userRepository.save(nuevoUsuario);
     } catch (error) {
       console.error('Error al crear el usuario:', error);

@@ -3,69 +3,78 @@ import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
-	@PrimaryGeneratedColumn('uuid')
-    idUser: string;
+  @PrimaryGeneratedColumn('uuid')
+  idUser: string;
 
-    @Column('varchar', { length: 100 })
-    name: string;
-    
-    @Column('varchar', {length: 100})
-    lastname: string;
+  @Column('varchar', { length: 100 })
+  name: string;
 
-    @Column('varchar', { length: 100, unique: true })
-    email: string;
+  @Column('varchar', { length: 100 })
+  lastname: string;
 
-    @Column('varchar', { length: 100, unique: true })
-    cedula: string;
+  @Column('varchar', { length: 50, unique: true })
+  username: string;
 
-    @Column('date')
-    birthdate: Date;
+  @Column('varchar', { length: 100, unique: true })
+  email: string;
 
-    @Column('varchar', { length: 255 })
-    address: string;
+  @Column('varchar', { length: 100, unique: true })
+  cedula: string;
 
-    @Column('varchar', { length: 10 })
-    phone: string;
+  @Column('date')
+  birthdate: Date;
 
-    @Column('varchar', { length: 100, nullable: true })
-    genere: string;
+  @Column('varchar', { length: 255 })
+  address: string;
 
-    @Column('varchar', { length: 255, nullable: true })
-    occupation: string;
+  @Column('varchar', { length: 10 })
+  phone: string;
 
-    @Column('number', { default: 0, nullable: true })
-    monthly_income: number;
+  @Column('varchar', { length: 100, nullable: true })
+  genere: string;
 
-    @Column('varchar', { length: 255 })
-    password: string;
+  @Column('varchar', { length: 255, nullable: true })
+  occupation: string;
 
-    @Column('boolean', { default: true })
-    isActive: boolean;
+  @Column('number', { default: 0, nullable: true })
+  monthly_income: number;
 
-    @Column('boolean', { default: false })
-    isAdmin: boolean;
+  @Column('varchar', { length: 255 })
+  password: string;
 
-    @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+  @Column('boolean', { default: true })
+  isActive: boolean;
 
-    @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @Column('boolean', { default: false })
+  isAdmin: boolean;
 
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
-    }
-    
-    @BeforeInsert()
-    async isActiveDefault() {
-        this.isActive = true;
-    }
+  @Column({ nullable: true })
+  resetPasswordToken?: string | null;
 
-    @BeforeInsert()
-    async isAdminDefault() {
-        this.isAdmin = false;
-    }
+  @Column({ type: 'timestamp', nullable: true })
+  resetPasswordExpires?: Date | null;
 
-    
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
+  @Column('timestamp', {
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  @BeforeInsert()
+  async isActiveDefault() {
+    this.isActive = true;
+  }
+
+  @BeforeInsert()
+  async isAdminDefault() {
+    this.isAdmin = false;
+  }
 }

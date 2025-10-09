@@ -48,5 +48,9 @@ export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     password: string;
+
+    @IsString()
+    @IsOptional()
+    idInstitucionFinanciera: string;
     
 }

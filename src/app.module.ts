@@ -6,32 +6,40 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { User } from './user/entities/user.entity';
+import { InstitucionFinancieraModule } from './institucion-financiera/institucion-financiera.module';
+import { TipoInversionModule } from './tipo-inversion/tipo-inversion.module';
 import { CreditTypeOrmEntity } from './credit/entities/credit-type.orm-entity';
-import { CreditSimulationOrmEntity } from './credit/entities/credit-simulation.orm-entity';
 import { CreditModule } from './credit/credit.module';
+import { CreditSimulationOrmEntity } from './credit/entities/credit-simulation.orm-entity';
+import { User } from './user/entities/user.entity';
+import { InstitucionFinanciera } from './institucion-financiera/entities/institucion-financiera.entity';
+import { TipoInversion } from './tipo-inversion/entities/tipo-inversion.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',         
-      host: 'localhost',     
-      port: 3306,             
-      username: 'root',     
-      password: '',       
-      database: 'proyectoEconomia',  
-       entities: [
-         User,
-         CreditTypeOrmEntity,
-         CreditSimulationOrmEntity,
-         IndirectChargeOrmEntity,
-         AmortizationTableOrmEntity,
-       ], // todas las entidades que uses
-      synchronize: false,      
+      type: (process.env.DB_TYPE as any) || 'mysql',
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 3306,
+      username: process.env.DB_USERNAME || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_DATABASE || 'proyectoEconomia',
+      entities: [
+        User,
+        CreditTypeOrmEntity,
+        CreditSimulationOrmEntity,
+        IndirectChargeOrmEntity,
+        AmortizationTableOrmEntity,
+        InstitucionFinanciera,
+        TipoInversion,
+      ],
+      synchronize: false,
     }),
     UserModule,
     AuthModule,
-  CreditModule,
+    CreditModule,
+    InstitucionFinancieraModule,
+    TipoInversionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

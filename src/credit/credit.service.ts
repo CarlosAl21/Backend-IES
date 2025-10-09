@@ -32,7 +32,7 @@ export class CreditService {
     return this.creditSimulationRepository.save(simulation);
   }
 
-  async getSimulation(id: number): Promise<CreditSimulationOrmEntity | null> {
+  async getSimulation(id: string): Promise<CreditSimulationOrmEntity | null> {
     return this.creditSimulationRepository.findOneBy({ id });
   }
 }

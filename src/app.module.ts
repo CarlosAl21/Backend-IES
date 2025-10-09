@@ -1,3 +1,5 @@
+import { IndirectChargeOrmEntity } from './credit/entities/indirect-charge.orm-entity';
+import { AmortizationTableOrmEntity } from './credit/entities/amortization-table.orm-entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -12,14 +14,20 @@ import { CreditModule } from './credit/credit.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',          // MySQL o MariaDB
-      host: 'localhost',      // tu servidor de XAMPP
-      port: 3306,             // puerto por defecto de MySQL
-      username: 'root',       // tu usuario de MySQL
-      password: '',           // tu contraseña, si tienes
-      database: 'proyectoEconomia',  // reemplaza con el nombre de tu base de datos
-  entities: [User, CreditTypeOrmEntity, CreditSimulationOrmEntity],       // todas las entidades que uses
-      synchronize: false,      // para desarrollo: crea las tablas automáticamente
+      type: 'mysql',         
+      host: 'localhost',     
+      port: 3306,             
+      username: 'root',     
+      password: '',       
+      database: 'proyectoEconomia',  
+       entities: [
+         User,
+         CreditTypeOrmEntity,
+         CreditSimulationOrmEntity,
+         IndirectChargeOrmEntity,
+         AmortizationTableOrmEntity,
+       ], // todas las entidades que uses
+      synchronize: false,      
     }),
     UserModule,
     AuthModule,

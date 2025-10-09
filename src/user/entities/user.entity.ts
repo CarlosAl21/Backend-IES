@@ -37,7 +37,8 @@ export class User {
   @Column('varchar', { length: 255, nullable: true })
   occupation: string;
 
-  @Column('number', { default: 0, nullable: true })
+  // CORRECCIÓN: usar decimal en lugar de number
+  @Column('decimal', { precision: 10, scale: 2, default: 0, nullable: true })
   monthly_income: number;
 
   @Column('varchar', { length: 255 })
@@ -52,8 +53,8 @@ export class User {
   @Column('boolean', { default: false })
   isSuperAdmin: boolean;
 
-  @Column({ nullable: true })
-  resetPasswordToken?: string | null;
+  @Column('varchar', { length: 255, nullable: true })
+ resetPasswordToken?: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
   resetPasswordExpires?: Date | null;

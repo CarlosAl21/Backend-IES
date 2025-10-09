@@ -32,4 +32,23 @@ export class CreateInstitucionFinancieraDto {
     @IsString()
     @IsNotEmpty()
     passwordAdmin: string;
+
+    // Optional admin defaults
+    @IsString()
+    adminName?: string;
+
+    @IsString()
+    adminLastname?: string;
+
+    @IsString()
+    adminCedula?: string;
+
+    // Accept either ISO date string or similar; optional
+    adminBirthdate?: string;
+
+    @IsString()
+    adminAddress?: string;
+
+    @IsString()
+    adminPhone?: string;
 }

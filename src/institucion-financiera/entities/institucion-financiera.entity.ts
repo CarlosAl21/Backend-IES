@@ -24,6 +24,9 @@ export class InstitucionFinanciera {
     @Column('varchar', { length: 255 })
     secondaryColor: string;
 
+    @Column('boolean', { default: true })
+    isActive: boolean;
+
     @OneToMany(() => User, (user) => user.idInstitucionFinanciera)
     users: User[];
 

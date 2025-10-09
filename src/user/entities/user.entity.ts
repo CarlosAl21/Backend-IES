@@ -83,8 +83,4 @@ export class User {
     this.isActive = true;
   }
 
-  @BeforeInsert()
-  async isAdminDefault() {
-    this.isAdmin = false;
-  }
 }

@@ -16,12 +16,12 @@ import { TipoInversion } from './tipo-inversion/entities/tipo-inversion.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',          // MySQL o MariaDB
-      host: 'localhost',      // tu servidor de XAMPP
-      port: 3306,             // puerto por defecto de MySQL
-      username: 'root',       // tu usuario de MySQL
-      password: '',           // tu contraseña, si tienes
-      database: 'proyectoEconomia',  // reemplaza con el nombre de tu base de datos
+      type: (process.env.DB_TYPE as any) || 'mysql',          // MySQL o MariaDB
+      host: process.env.DB_HOST || 'localhost',      // tu servidor de XAMPP
+      port: Number(process.env.DB_PORT) || 3306,             // puerto por defecto de MySQL
+      username: process.env.DB_USERNAME || 'root',       // tu usuario de MySQL
+      password: process.env.DB_PASSWORD || '',           // tu contraseña, si tienes
+      database: process.env.DB_DATABASE || 'proyectoEconomia',  // reemplaza con el nombre de tu base de datos
       entities: [
         User, 
         CreditTypeOrmEntity, 

@@ -1,3 +1,4 @@
+import { TipoInversion } from "src/tipo-inversion/entities/tipo-inversion.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -29,5 +30,8 @@ export class InstitucionFinanciera {
 
     @OneToMany(() => User, (user) => user.idInstitucionFinanciera)
     users: User[];
+
+    @OneToMany(() => TipoInversion, (tipoInversion) => tipoInversion.idInstitucionFinanciera)
+    tiposInversion: TipoInversion[];
 
 }

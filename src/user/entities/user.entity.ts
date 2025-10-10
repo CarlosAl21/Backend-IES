@@ -1,6 +1,7 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InstitucionFinanciera } from 'src/institucion-financiera/entities/institucion-financiera.entity';
+import { InversionesActiva } from 'src/inversiones-activas/entities/inversiones-activa.entity';
 
 @Entity()
 export class User {
@@ -72,7 +73,8 @@ export class User {
   @JoinColumn({ name: 'idInstitucionFinanciera' })
   idInstitucionFinanciera: InstitucionFinanciera;
 
-
+  @OneToMany(() => InversionesActiva, (inversionesActiva) => inversionesActiva.usuario)
+  inversionesActivas: InversionesActiva[];
 
   @BeforeInsert()
   async hashPassword() {

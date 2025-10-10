@@ -1,4 +1,5 @@
 import { InstitucionFinanciera } from "src/institucion-financiera/entities/institucion-financiera.entity";
+import { InversionesActiva } from "src/inversiones-activas/entities/inversiones-activa.entity";
 import { SimuladorInversion } from "src/simulador-inversion/entities/simulador-inversion.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -40,4 +41,11 @@ export class TipoInversion {
     @ManyToOne(() => InstitucionFinanciera, institucion => institucion.tiposInversion)
     @JoinColumn({ name: 'idInstitucionFinanciera' })
     idInstitucionFinanciera: InstitucionFinanciera;
+
+    @OneToMany(() => SimuladorInversion, simulacion => simulacion.idTipoInversion)
+    inversionesActivas: SimuladorInversion[];
+
+    @OneToMany(() => InversionesActiva, inversionActiva => inversionActiva.tipoInversion)
+    inversionesActivasList: InversionesActiva[];
+    
 }

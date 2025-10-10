@@ -13,6 +13,7 @@ import { User } from './user/entities/user.entity';
 import { InstitucionFinanciera } from './institucion-financiera/entities/institucion-financiera.entity';
 import { TipoInversion } from './tipo-inversion/entities/tipo-inversion.entity';
 import { SimuladorInversionModule } from './simulador-inversion/simulador-inversion.module';
+import { InversionesActivasModule } from './inversiones-activas/inversiones-activas.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SimuladorInversionModule } from './simulador-inversion/simulador-invers
     InstitucionFinancieraModule,
     TipoInversionModule,
     SimuladorInversionModule,
+    InversionesActivasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

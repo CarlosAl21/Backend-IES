@@ -1,5 +1,6 @@
 import { InstitucionFinanciera } from "src/institucion-financiera/entities/institucion-financiera.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { SimuladorInversion } from "src/simulador-inversion/entities/simulador-inversion.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class TipoInversion {
@@ -12,8 +13,8 @@ export class TipoInversion {
     @Column('decimal', { precision: 5, scale: 2, default: 0 })
     tasaRendimientoAnual: number;
 
-    @Column('integer', { default: 1 })
-    plazoMinimoMeses: number;
+    @Column('integer', { default: 30 })
+    plazoMinimoDias: number;
 
     @Column('decimal', { precision: 10, scale: 2, default: 1 })
     montoMinimo: number;
@@ -26,6 +27,9 @@ export class TipoInversion {
 
     @Column('boolean', { default: true })
     estado: boolean;
+
+    @OneToMany(() => SimuladorInversion, simulacion => simulacion.idTipoInversion)
+    simulaciones: SimuladorInversion[];
 
     @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
     fechaCreacion: Date;

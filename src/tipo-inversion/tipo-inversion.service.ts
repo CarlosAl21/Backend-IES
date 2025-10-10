@@ -23,6 +23,12 @@ export class TipoInversionService {
       if (!institucion) {
         throw new Error('Institucion Financiera not found');
       }
+      if(createTipoInversionDto.plazoMinimoDias < 31){
+        throw new Error('El plazo minimo debe ser al menos 31 dias');
+      }
+      if(createTipoInversionDto.montoMinimo < 1){
+        throw new Error('El monto minimo debe ser al menos 1');
+      }
       const tipoInversion = this.tipoInversionRepository.create({
         ...createTipoInversionDto,
         idInstitucionFinanciera: institucion,

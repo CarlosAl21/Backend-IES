@@ -9,7 +9,7 @@ export class CreateTipoInversionDto {
     tasaRendimientoAnual: number;
 
     @IsNotEmpty()
-    plazoMinimoMeses: number;
+    plazoMinimoDias: number;
 
     @IsNotEmpty()
     montoMinimo: number;

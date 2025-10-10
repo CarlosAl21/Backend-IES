@@ -12,6 +12,7 @@ import { CreditSimulationOrmEntity } from './credit/entities/credit-simulation.o
 import { User } from './user/entities/user.entity';
 import { InstitucionFinanciera } from './institucion-financiera/entities/institucion-financiera.entity';
 import { TipoInversion } from './tipo-inversion/entities/tipo-inversion.entity';
+import { SimuladorInversionModule } from './simulador-inversion/simulador-inversion.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TipoInversion } from './tipo-inversion/entities/tipo-inversion.entity';
     CreditModule,
     InstitucionFinancieraModule,
     TipoInversionModule,
+    SimuladorInversionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

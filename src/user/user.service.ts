@@ -1,4 +1,11 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,7 +16,6 @@ import { InstitucionFinanciera } from 'src/institucion-financiera/entities/insti
 
 @Injectable()
 export class UserService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -50,8 +56,8 @@ export class UserService {
     return telefonoRegex.test(telefono);
   }
 
-  async validateUser(email: string, pass: string): Promise<User|any> {
-    const user = await this.userRepository.findOne({ where: { email: email} });
+  async validateUser(email: string, pass: string): Promise<User | any> {
+    const user = await this.userRepository.findOne({ where: { email: email } });
     if (user && (await bcrypt.compare(pass, user.password))) {
       return user;
     }
@@ -59,28 +65,28 @@ export class UserService {
   }
 
   async saveResetToken(email: string, token: string) {
-  const user = await this.userRepository.findOne({ where: { email } });
-  if (!user) return false;
-  user.resetPasswordToken = token;
-  user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora de validez
-  await this.userRepository.save(user);
-  return true;
-}
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) return false;
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora de validez
+    await this.userRepository.save(user);
+    return true;
+  }
 
-async resetPasswordWithToken(token: string, newPassword: string) {
-  const user = await this.userRepository.findOne({
-    where: {
-      resetPasswordToken: token,
-      resetPasswordExpires: MoreThan(new Date()),
-    },
-  });
-  if (!user) return false;
-  user.password = await bcrypt.hash(newPassword, 10);
-  user.resetPasswordToken = null;
-  user.resetPasswordExpires = null;
-  await this.userRepository.save(user);
-  return true;
-}
+  async resetPasswordWithToken(token: string, newPassword: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: MoreThan(new Date()),
+      },
+    });
+    if (!user) return false;
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await this.userRepository.save(user);
+    return true;
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -91,24 +97,32 @@ async resetPasswordWithToken(token: string, newPassword: string) {
       if (!this.validarEmail(createUserDto.email)) {
         throw new BadRequestException('El email no es válido');
       }
-      const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+      const existingUser = await this.userRepository.findOne({
+        where: { email: createUserDto.email },
+      });
       if (existingUser) {
         throw new ConflictException('El email ya está en uso');
       }
-      if (createUserDto.phone && !this.validarTelefonoEcuador(createUserDto.phone)) {
+      if (
+        createUserDto.phone &&
+        !this.validarTelefonoEcuador(createUserDto.phone)
+      ) {
         throw new BadRequestException('El teléfono no es válido');
       }
 
       if (createUserDto.idInstitucionFinanciera) {
-        const institucion = await this.institucionFinancieraRepository.findOneBy({ idInstitucionFinanciera: createUserDto.idInstitucionFinanciera });
+        const institucion =
+          await this.institucionFinancieraRepository.findOneBy({
+            idInstitucionFinanciera: createUserDto.idInstitucionFinanciera,
+          });
         if (!institucion) {
           throw new NotFoundException('Institución financiera no encontrada');
         }
-      // Crear un objeto sin la propiedad idInstitucionFinanciera
-      const { idInstitucionFinanciera, ...userData } = createUserDto;
-      const nuevoUsuario = this.userRepository.create(userData);
-      nuevoUsuario.idInstitucionFinanciera = institucion;
-      return await this.userRepository.save(nuevoUsuario);
+        // Crear un objeto sin la propiedad idInstitucionFinanciera
+        const { idInstitucionFinanciera, ...userData } = createUserDto;
+        const nuevoUsuario = this.userRepository.create(userData);
+        nuevoUsuario.idInstitucionFinanciera = institucion;
+        return await this.userRepository.save(nuevoUsuario);
       }
       const { idInstitucionFinanciera, ...userData } = createUserDto;
       const nuevoUsuario = this.userRepository.create(userData);
@@ -116,7 +130,11 @@ async resetPasswordWithToken(token: string, newPassword: string) {
     } catch (error) {
       console.error('Error al crear el usuario:', error);
       // Si ya es una excepción de Nest, relánzala
-      if (error instanceof BadRequestException || error instanceof ConflictException || error instanceof NotFoundException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ConflictException ||
+        error instanceof NotFoundException
+      ) {
         throw error;
       }
       throw new InternalServerErrorException('Error al crear el usuario');
@@ -125,7 +143,7 @@ async resetPasswordWithToken(token: string, newPassword: string) {
 
   async findAll() {
     const user = await this.userRepository.find();
-    return user.map(({ password, ...rest}) => rest); // Excluir la contraseña del resultado;
+    return user.map(({ password, ...rest }) => rest); // Excluir la contraseña del resultado;
   }
 
   async findOne(id: string) {
@@ -154,7 +172,10 @@ async resetPasswordWithToken(token: string, newPassword: string) {
         throw new BadRequestException('El email no es válido');
       }
 
-      if (updateUserDto.phone && !this.validarTelefonoEcuador(updateUserDto.phone)) {
+      if (
+        updateUserDto.phone &&
+        !this.validarTelefonoEcuador(updateUserDto.phone)
+      ) {
         throw new BadRequestException('El teléfono no es válido');
       }
 
@@ -181,10 +202,10 @@ async resetPasswordWithToken(token: string, newPassword: string) {
 
       // Realizar la actualización en la base de datos
       await this.userRepository.update(id, updateData);
-      
+
       // Obtener el usuario actualizado para retornarlo (sin la contraseña)
-      const usuarioActualizado = await this.userRepository.findOne({ 
-        where: { idUser: id }
+      const usuarioActualizado = await this.userRepository.findOne({
+        where: { idUser: id },
       });
 
       if (!usuarioActualizado) {
@@ -192,7 +213,6 @@ async resetPasswordWithToken(token: string, newPassword: string) {
       }
       const { password, ...rest } = usuarioActualizado;
       return rest;
-
     } catch (error) {
       console.error('Error al actualizar el usuario:', error);
       if (
@@ -224,4 +244,3 @@ async resetPasswordWithToken(token: string, newPassword: string) {
     }
   }
 }
-

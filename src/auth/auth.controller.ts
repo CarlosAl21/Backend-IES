@@ -10,7 +10,14 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+// añadido swagger + dtos
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { User } from 'src/user/entities/user.entity';
+import { LoginDto } from './dto/login.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -19,27 +26,20 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  async register(
-    @Body()
-    body: {
-      name: string;
-      lastname: string;
-      username: string;
-      email: string;
-      phone: string;
-      address: string;
-      password: string;
-      genere?: string;
-      occupation?: string;
-      monthly_income?: number;
-    },
-  ) {
-    // Map incoming body to CreateUserDto shape expected by UserService.create
-    return this.userService.create(body as any);
+  @ApiOperation({ summary: 'Registrar un nuevo usuario' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: 'Usuario creado', type: User })
+  @ApiResponse({ status: 400, description: 'Solicitud inválida' })
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
+  @ApiOperation({ summary: 'Iniciar sesión y obtener token JWT' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 200, description: 'Token de acceso (access_token)', schema: { example: { access_token: '...' } } })
+  @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
+  async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       return { error: 'Usuario o contraseña incorrectos' };
@@ -49,39 +49,49 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Cerrar sesión (revocar token localmente)' })
+  @ApiResponse({ status: 200, description: 'Sesión cerrada correctamente' })
   async logout(@Request() req) {
     const token = req.headers.authorization?.split(' ')[1];
-    // jwt.strategy.validate returns { userId, username, isAdmin }
     await this.authService.logout(req.user.userId, token);
     return { message: 'Sesión cerrada correctamente' };
   }
 
   @Post('profile')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Perfil del usuario' })
   getProfile(@Request() req) {
     return req.user;
   }
 
   // --- Password reset endpoints ---
   @Post('forgot-password')
+  @ApiOperation({ summary: 'Solicitar reseteo de contraseña (genera token)' })
+  @ApiBody({ schema: { type: 'object', properties: { email: { type: 'string' } } } })
+  @ApiResponse({ status: 200, description: 'Si el usuario existe, se envió un correo de reseteo (simulado)' })
   async forgotPassword(@Body('email') email: string) {
     const token = uuidv4();
-    // If UserService implements saveResetToken, call it. Otherwise do nothing.
     if (typeof this.userService['saveResetToken'] === 'function') {
       const saved = await (this.userService as any).saveResetToken(
         email,
         token,
       );
-      // If you later add a MailService, send the reset email here.
       if (saved && typeof (this as any).mailService === 'function') {
-        // no-op: mailer not implemented in this project by default
+        // no-op: mailer no implementado
       }
     }
     return { message: 'Si el usuario existe, se envió un correo de reseteo.' };
   }
 
   @Post('reset-password')
-  async resetPassword(@Body() body: { token: string; newPassword: string }) {
+  @ApiOperation({ summary: 'Resetear contraseña usando token' })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: 200, description: 'Contraseña actualizada correctamente' })
+  @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
+  async resetPassword(@Body() body: ResetPasswordDto) {
     if (typeof this.userService['resetPasswordWithToken'] !== 'function') {
       throw new BadRequestException('Funcionalidad de reseteo no implementada');
     }

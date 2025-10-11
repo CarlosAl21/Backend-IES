@@ -5,17 +5,15 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { InstitucionFinancieraModule } from './institucion-financiera/institucion-financiera.module';
-import { TipoInversionModule } from './tipo-inversion/tipo-inversion.module';
-import { CreditTypeOrmEntity } from './credit/entities/credit-type.orm-entity';
-import { CreditModule } from './credit/credit.module';
-import { CreditSimulationOrmEntity } from './credit/entities/credit-simulation.orm-entity';
 import { User } from './user/entities/user.entity';
 import { InstitucionFinanciera } from './institucion-financiera/entities/institucion-financiera.entity';
-import { TipoInversion } from './tipo-inversion/entities/tipo-inversion.entity';
-import { SimuladorInversionModule } from './simulador-inversion/simulador-inversion.module';
-import { InversionesActivasModule } from './inversiones-activas/inversiones-activas.module';
-import { SimuladorInversion } from './simulador-inversion/entities/simulador-inversion.entity';
-import { InversionesActiva } from './inversiones-activas/entities/inversiones-activa.entity';
+import { InversionesModule } from './inversiones/inversiones.module';
+import { CreditosModule } from './creditos/creditos.module';
+import { Inversiones } from './inversiones/entities/inversione.entity';
+import { Credito } from './creditos/entities/credito.entity';
+import { SolicitudesInversionModule } from './solicitudes-inversion/solicitudes-inversion.module';
+import { SolicitudesInversion } from './solicitudes-inversion/entities/solicitudes-inversion.entity';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -28,23 +26,21 @@ import { InversionesActiva } from './inversiones-activas/entities/inversiones-ac
       database: process.env.DB_DATABASE || 'proyectoeconomia',  // reemplaza con el nombre de tu base de datos
       entities: [
         User, 
-        CreditTypeOrmEntity, 
-        CreditSimulationOrmEntity,
         InstitucionFinanciera,
-        TipoInversion,
-        SimuladorInversion,
-        InversionesActiva,
+        Inversiones,
+        Credito,
+        SolicitudesInversion,
         
       ],       // todas las entidades que uses
       synchronize: true,      // para desarrollo: crea las tablas automáticamente
     }),
     UserModule,
     AuthModule,
-    CreditModule,
     InstitucionFinancieraModule,
-    TipoInversionModule,
-    SimuladorInversionModule,
-    InversionesActivasModule,
+    InversionesModule,
+    CreditosModule,
+    SolicitudesInversionModule,
+    CloudinaryModule
   ],
   controllers: [AppController],
   providers: [AppService],

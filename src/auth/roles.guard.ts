@@ -25,14 +25,32 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
     const user = request.user;
     if (!user) return false;
 
-    // construir lista de roles del usuario según la entidad User
-    const userRoles: AppRole[] = [];
-    if (user.isSuperAdmin) userRoles.push('SuperAdmin');
-    if (user.isAdmin) userRoles.push('Admin');
-    // todos los usuarios autenticados son al menos 'User'
-    userRoles.push('User');
+    // Obtener rol desde el token (ya mapeado por AuthService) o hacer fallback desde posibles valores en español
+    const tokenRole: string | undefined = user.role;
+    const isAdminFlag: boolean = !!user.isAdmin;
 
-    const hasRole = requiredRoles.some(role => userRoles.includes(role));
+    // Normalizar a AppRole
+    const normalizeToAppRole = (r?: string): AppRole => {
+      if (!r) return isAdminFlag ? 'Admin' : 'User';
+      switch (r) {
+        case 'SuperAdmin':
+        case 'SuperAdministrador':
+        case 'SuperAdmininstrador': // por si hay typo histórico
+          return 'SuperAdmin';
+        case 'Admin':
+        case 'Administrador':
+          return 'Admin';
+        case 'User':
+        case 'Usuario':
+        case 'Revisor':
+        default:
+          return 'User';
+      }
+    };
+
+    const userRole = normalizeToAppRole(tokenRole);
+
+    const hasRole = requiredRoles.some(role => role === userRole);
     if (!hasRole) throw new ForbiddenException('Insufficient role');
     return true;
   }

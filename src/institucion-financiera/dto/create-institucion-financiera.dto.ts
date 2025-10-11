@@ -1,54 +1,61 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateInstitucionFinancieraDto {
-    @IsString()
-    @IsNotEmpty()
-    logo: string;
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
 
-    @IsString()
-    @IsNotEmpty()
-    nombre: string;
-    
-    @IsString()
-    @IsNotEmpty()
-    mission: string;
+  @IsString()
+  @IsNotEmpty()
+  mission: string;
 
-    @IsString()
-    @IsNotEmpty()
-    vision: string;
+  @IsString()
+  @IsNotEmpty()
+  vision: string;
 
-    @IsString()
-    @IsNotEmpty()
-    primaryColor: string;
+  @IsString()
+  @IsNotEmpty()
+  primaryColor: string;
 
-    @IsString()
-    @IsNotEmpty()
-    secondaryColor: string;
+  @IsString()
+  @IsNotEmpty()
+  secondaryColor: string;
 
-    @IsString()
-    @IsNotEmpty()
-    emailAdmin: string;
+  //Datos del Admin
 
-    @IsString()
-    @IsNotEmpty()
-    passwordAdmin: string;
+  @IsString()
+  @IsNotEmpty()
+  firstNameAdmin: string;
 
-    // Optional admin defaults
-    @IsString()
-    adminName?: string;
+  @IsString()
+  @IsNotEmpty()
+  lastNameAdmin: string;
 
-    @IsString()
-    adminLastname?: string;
+  @IsString()
+  @IsNotEmpty()
+  secondNameAdmin: string;
 
-    @IsString()
-    adminCedula?: string;
+  @IsString()
+  @IsNotEmpty()
+  secondLastNameAdmin: string;
 
-    // Accept either ISO date string or similar; optional
-    adminBirthdate?: string;
+  @IsString()
+  @IsNotEmpty()
+  phoneAdmin: string;
 
-    @IsString()
-    adminAddress?: string;
+  @IsString()
+  @IsNotEmpty()
+  homePhoneAdmin: string;
 
-    @IsString()
-    adminPhone?: string;
+  @IsString()
+  @IsNotEmpty()
+  cedulaAdmin: string;
+
+  @IsString()
+  @IsNotEmpty()
+  emailAdmin: string;
+
+  @IsString()
+  @IsNotEmpty()
+  passwordAdmin: string;
 }

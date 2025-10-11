@@ -56,12 +56,29 @@ export class AuthService {
     }
   }
 
+  private mapRole(entityRole?: string): 'SuperAdmin' | 'Admin' | 'User' {
+    if (!entityRole) return 'User';
+    switch (entityRole) {
+      case 'SuperAdministrador':
+      case 'SuperAdmin':
+        return 'SuperAdmin';
+      case 'Administrador':
+      case 'Admin':
+        return 'Admin';
+      case 'Usuario':
+      case 'Revisor':
+      default:
+        return 'User';
+    }
+  }
+
   async login(user: any) {
     try {
       const payload = {
         username: user.username ?? user.email ?? user.name,
         sub: user.idUser,
-        rol: user.isAdmin ? 'admin' : 'user',
+        // incluir rol estandarizado en el token
+        role: this.mapRole(user.role),
       };
       const token = this.jwtService.sign(payload);
       // Guardar sesión en la lista de sesiones activas

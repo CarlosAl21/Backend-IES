@@ -1,4 +1,6 @@
-import { TipoInversion } from "src/tipo-inversion/entities/tipo-inversion.entity";
+import { Credito } from "src/creditos/entities/credito.entity";
+import { Inversiones } from "src/inversiones/entities/inversione.entity";
+import { SolicitudesInversion } from "src/solicitudes-inversion/entities/solicitudes-inversion.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -8,7 +10,7 @@ export class InstitucionFinanciera {
     idInstitucionFinanciera: string;
 
     @Column('varchar', { length: 255 })
-    logo: string;
+    logo_url: string;
 
     @Column('varchar', { length: 100 })
     name: string;
@@ -31,7 +33,12 @@ export class InstitucionFinanciera {
     @OneToMany(() => User, (user) => user.idInstitucionFinanciera)
     users: User[];
 
-    @OneToMany(() => TipoInversion, (tipoInversion) => tipoInversion.idInstitucionFinanciera)
-    tiposInversion: TipoInversion[];
+    @OneToMany(() => Inversiones, (inversiones) => inversiones.institucionFinanciera)
+    inversiones: Inversiones[];
 
+    @OneToMany(() => Credito, (credito) => credito.institucionFinanciera)
+    creditos: Credito[];
+
+    @OneToMany(() => SolicitudesInversion, (solicitudes) => solicitudes.institucionFinanciera)
+    solicitudesInversion: SolicitudesInversion[];
 }

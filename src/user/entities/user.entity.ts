@@ -1,7 +1,7 @@
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InstitucionFinanciera } from 'src/institucion-financiera/entities/institucion-financiera.entity';
-import { InversionesActiva } from 'src/inversiones-activas/entities/inversiones-activa.entity';
+import { SolicitudesInversion } from 'src/solicitudes-inversion/entities/solicitudes-inversion.entity';
 
 @Entity()
 export class User {
@@ -9,38 +9,28 @@ export class User {
   idUser: string;
 
   @Column('varchar', { length: 100 })
-  name: string;
+  firstName: string;
 
   @Column('varchar', { length: 100 })
-  lastname: string;
+  lastName: string;
 
-  @Column('varchar', { length: 50, unique: true })
-  username: string;
+  @Column('varchar', { length: 100})
+  secondName: string;
 
-  @Column('varchar', { length: 100, unique: true })
-  email: string;
+  @Column('varchar', {length: 100})
+  secondLastName: string;
 
-  @Column('varchar', { length: 100, unique: true })
-  cedula: string;
-
-  @Column('date')
-  birthdate: Date;
-
-  @Column('varchar', { length: 255 })
-  address: string;
-
-  @Column('varchar', { length: 10 })
+  @Column('varchar', {length:10})
   phone: string;
 
-  @Column('varchar', { length: 100, nullable: true })
-  genere: string;
+  @Column('varchar', { length: 7})
+  homePhone: string;
 
-  @Column('varchar', { length: 255, nullable: true })
-  occupation: string;
+  @Column('varchar', { length: 10, unique: true })
+  cedula: string;
 
-  // CORRECCIÓN: usar decimal en lugar de number
-  @Column('decimal', { precision: 10, scale: 2, default: 0, nullable: true })
-  monthly_income: number;
+  @Column('varchar', { length: 255, unique: true })
+  email: string;
 
   @Column('varchar', { length: 255 })
   password: string;
@@ -48,14 +38,18 @@ export class User {
   @Column('boolean', { default: true })
   isActive: boolean;
 
-  @Column('boolean', { default: false })
-  isAdmin: boolean;
+  @Column('enum', { enum: ['Usuario', 'Administrador', 'SuperAdministrador', 'Revisor'], default: 'Usuario' })
+  role: 'Usuario' | 'Administrador' | 'SuperAdministrador' | 'Revisor';
 
-  @Column('boolean', { default: false })
-  isSuperAdmin: boolean;
+  @ManyToOne(() => InstitucionFinanciera, (institucion) => institucion.users, { eager: true, nullable: true })
+  @JoinColumn({ name: 'idInstitucionFinanciera' })
+  idInstitucionFinanciera: InstitucionFinanciera;
+
+  @OneToMany(() => SolicitudesInversion, (solicitudes) => solicitudes.user)
+  solicitudesInversion: SolicitudesInversion[];
 
   @Column('varchar', { length: 255, nullable: true })
- resetPasswordToken?: string | null;
+  resetPasswordToken?: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
   resetPasswordExpires?: Date | null;
@@ -68,13 +62,6 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-
-  @ManyToOne(() => InstitucionFinanciera, (institucion) => institucion.users, { eager: true, nullable: true })
-  @JoinColumn({ name: 'idInstitucionFinanciera' })
-  idInstitucionFinanciera: InstitucionFinanciera;
-
-  @OneToMany(() => InversionesActiva, (inversionesActiva) => inversionesActiva.usuario)
-  inversionesActivas: InversionesActiva[];
 
   @BeforeInsert()
   async hashPassword() {

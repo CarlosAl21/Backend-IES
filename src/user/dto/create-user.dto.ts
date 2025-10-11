@@ -1,56 +1,54 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @ApiProperty({ example: 'Juan', description: 'Primer nombre' })
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    lastname: string;
+  @ApiProperty({ example: 'Pérez', description: 'Apellido' })
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    username: string;
+  @ApiProperty({ example: 'Carlos', description: 'Segundo nombre' })
+  @IsString()
+  @IsNotEmpty()
+  secondName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    email: string;
+  @ApiProperty({ example: 'González', description: 'Segundo apellido' })
+  @IsString()
+  @IsNotEmpty()
+  secondLastName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    cedula: string;
+  @ApiProperty({ example: '0999999999', description: 'Teléfono móvil' })
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
 
-    @IsString()
-    @IsNotEmpty()
-    birthdate: Date;
+  @ApiProperty({ example: '022222222', description: 'Teléfono de casa' })
+  @IsString()
+  @IsNotEmpty()
+  homePhone: string;
 
-    @IsString()
-    @IsNotEmpty()
-    address: string;
+  @ApiProperty({ example: '0102030405', description: 'Cédula (Ecuador)' })
+  @IsString()
+  @IsNotEmpty()
+  cedula: string;
 
-    @IsString()
-    @IsNotEmpty()
-    phone: string;
+  @ApiProperty({ example: 'usuario@example.com', description: 'Correo electrónico' })
+  @IsString()
+  @IsNotEmpty()
+  email: string;
 
-    @IsString()
-    @IsOptional()
-    genere?: string;
+  @ApiProperty({ example: 'Password123!', description: 'Contraseña' })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 
-    @IsString()
-    @IsOptional()
-    occupation?: string;
-
-    @IsOptional()
-    @IsNumber()
-    monthly_income?: number;
-
-    @IsString()
-    @IsNotEmpty()
-    password: string;
-
-    @IsString()
-    @IsOptional()
-    idInstitucionFinanciera: string;
-    
+  @ApiPropertyOptional({ example: 'uuid-institucion', description: 'ID de la institución (opcional)' })
+  @IsString()
+  @IsOptional()
+  idInstitucionFinanciera: string;
 }

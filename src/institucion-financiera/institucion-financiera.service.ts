@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InstitucionFinanciera } from './entities/institucion-financiera.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class InstitucionFinancieraService {
@@ -13,34 +14,49 @@ export class InstitucionFinancieraService {
     private readonly institucionFinancieraRepository: Repository<InstitucionFinanciera>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(createInstitucionFinancieraDto: CreateInstitucionFinancieraDto) {
+  async create(createInstitucionFinancieraDto: CreateInstitucionFinancieraDto, files?: Array<Express.Multer.File>) {
     try {
-      // prepare a username from the email (part before @) or fallback to 'admin'
-      const username = createInstitucionFinancieraDto.emailAdmin
-        ? String(createInstitucionFinancieraDto.emailAdmin).split('@')[0]
-        : 'admin';
+      // Mapear DTO a entidad InstitucionFinanciera (nombres distintos)
+      const institucionFinanciera = this.institucionFinancieraRepository.create({
+        name: createInstitucionFinancieraDto.nombre,
+        mission: createInstitucionFinancieraDto.mission,
+        vision: createInstitucionFinancieraDto.vision,
+        primaryColor: createInstitucionFinancieraDto.primaryColor,
+        secondaryColor: createInstitucionFinancieraDto.secondaryColor,
+      });
 
+      // Si hay archivos, subirlos a Cloudinary y crear los registros de fotos
+      if (files && files.length > 0) {
+        const uploadPromises = files.map(file => this.cloudinaryService.upload(file));
+        const uploadResults = await Promise.all(uploadPromises);
+
+        const fotosPromises = uploadResults.map(result =>
+          institucionFinanciera.logo_url = result.secure_url
+        );
+
+        await Promise.all(fotosPromises);
+      }
+
+      await this.institucionFinancieraRepository.save(institucionFinanciera);
+
+      // Crear el usuario administrador con los datos del DTO y asignarle la institución
       const newUser = this.userRepository.create({
+        firstName: createInstitucionFinancieraDto.firstNameAdmin,
+        lastName: createInstitucionFinancieraDto.lastNameAdmin,
+        secondName: createInstitucionFinancieraDto.secondNameAdmin,
+        secondLastName: createInstitucionFinancieraDto.secondLastNameAdmin,
+        phone: createInstitucionFinancieraDto.phoneAdmin,
+        homePhone: createInstitucionFinancieraDto.homePhoneAdmin,
+        cedula: createInstitucionFinancieraDto.cedulaAdmin,
         email: createInstitucionFinancieraDto.emailAdmin,
         password: createInstitucionFinancieraDto.passwordAdmin,
-        isAdmin: true,
-        // default required fields so the entity can be saved
-        name: createInstitucionFinancieraDto.adminName ?? 'Admin',
-        lastname: createInstitucionFinancieraDto.adminLastname ?? 'Admin',
-        username,
-        cedula: createInstitucionFinancieraDto.adminCedula ?? '0000000000',
-        birthdate: createInstitucionFinancieraDto.adminBirthdate
-          ? new Date(createInstitucionFinancieraDto.adminBirthdate)
-          : new Date('1970-01-01'),
-        address: createInstitucionFinancieraDto.adminAddress ?? 'N/D',
-        phone: createInstitucionFinancieraDto.adminPhone ?? '0000000000',
-      });
-      
-      const institucionFinanciera = this.institucionFinancieraRepository.create(createInstitucionFinancieraDto);
-      await this.institucionFinancieraRepository.save(institucionFinanciera);
-      newUser.idInstitucionFinanciera = institucionFinanciera;
+        role: 'Administrador', // rol por defecto como administrador
+        idInstitucionFinanciera: institucionFinanciera,
+      } as Partial<User>);
+
       await this.userRepository.save(newUser);
       return institucionFinanciera;
     } catch (error) {
@@ -51,7 +67,14 @@ export class InstitucionFinancieraService {
 
   async findAll() {
     try {
-      return await this.institucionFinancieraRepository.find();
+      const alias = 'institucion';
+      const instituciones = await this.institucionFinancieraRepository
+        .createQueryBuilder(alias)
+        // 'users' es la propiedad definida en la entidad InstitucionFinanciera
+        .leftJoinAndSelect(`${alias}.users`, 'user', 'user.role = :role', { role: 'Administrador' })
+        .getMany();
+
+      return instituciones;
     } catch (error) {
       console.error('Error finding all institucionFinanciera:', error);
       throw new Error('Error finding all institucionFinanciera');

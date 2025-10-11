@@ -14,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
-        return { userId: payload.sub, username: payload.email, isAdmin: payload.isAdmin };
+        // ahora devolvemos el role tal como viene en el token
+        return { userId: payload.sub, username: payload.username, role: payload.role };
     }
 }

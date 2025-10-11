@@ -92,6 +92,22 @@ export class SolicitudesInversionService {
     }
   }
 
+  async findByInstitucionFinanciera(idInstitucionFinanciera: string) {
+    try {
+      const institucionFinanciera = await this.institucionFinancieraRepository.findOne({
+        where: { idInstitucionFinanciera },
+      });
+      if (!institucionFinanciera) {
+        throw new Error('Institución Financiera no encontrada');
+      }
+      return await this.solicitudesInversionRepository.find({
+        where: { institucionFinanciera: { idInstitucionFinanciera} }
+      });
+    } catch (error) {
+      throw new Error('Error al obtener las solicitudes por institución financiera');
+    }
+  }
+
   async findOne(id: string) {
     try {
       return await this.solicitudesInversionRepository.findOne({ where: { idSolicitud: id } });

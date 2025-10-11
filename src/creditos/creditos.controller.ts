@@ -54,4 +54,12 @@ export class CreditosController {
   remove(@Param('id') id: string) {
     return this.creditosService.remove(id);
   }
+  
+  @Get('institucion/:id')
+  @ApiOperation({ summary: 'Obtener créditos por institución financiera' })
+  @ApiParam({ name: 'id', description: 'ID de la institución financiera' })
+  @ApiResponse({ status: 200, description: 'Lista de créditos de la institución', type: [Credito] })
+  findByInstitucion(@Param('id') id: string) {
+    return this.creditosService.findByInstitucionFinanciera(id);
+  }
 }

@@ -54,4 +54,12 @@ export class InversionesController {
   remove(@Param('id') id: string) {
     return this.inversionesService.remove(id);
   }
+
+  @Get('institucion/:id')
+  @ApiOperation({ summary: 'Obtener inversiones por institución financiera' })
+  @ApiParam({ name: 'id', description: 'ID de la institución financiera' })
+  @ApiResponse({ status: 200, description: 'Lista de inversiones de la institución', type: [Inversiones] })
+  findByInstitucion(@Param('id') id: string) {
+    return this.inversionesService.findByInstitucionFinanciera(id);
+  }
 }

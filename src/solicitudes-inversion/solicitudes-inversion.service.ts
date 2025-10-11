@@ -92,15 +92,19 @@ export class SolicitudesInversionService {
     }
   }
 
-  async findAllByInstitucion(idInstitucion: string) {
+  async findByInstitucionFinanciera(idInstitucionFinanciera: string) {
     try {
+      const institucionFinanciera = await this.institucionFinancieraRepository.findOne({
+        where: { idInstitucionFinanciera },
+      });
+      if (!institucionFinanciera) {
+        throw new Error('Institución Financiera no encontrada');
+      }
       return await this.solicitudesInversionRepository.find({
-        where: { institucionFinanciera: { idInstitucionFinanciera: idInstitucion } },
-        relations: ['user', 'inversion', 'institucionFinanciera'],
+        where: { institucionFinanciera: { idInstitucionFinanciera} }
       });
     } catch (error) {
-      console.error('Error finding solicitudes by institucion:', error);
-      throw new Error('Error finding solicitudes by institucion');
+      throw new Error('Error al obtener las solicitudes por institución financiera');
     }
   }
 

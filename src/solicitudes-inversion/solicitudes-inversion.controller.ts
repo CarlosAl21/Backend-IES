@@ -55,12 +55,12 @@ export class SolicitudesInversionController {
     return this.solicitudesInversionService.findAll();
   }
 
-  @Get('institucion/:idInstitucion')
-  @ApiOperation({ summary: 'Obtener todas las solicitudes por ID de la institución financiera' })
-  @ApiParam({ name: 'idInstitucion', description: 'ID de la institución financiera' })
+  @Get('institucion/:id')
+  @ApiOperation({ summary: 'Obtener todas las solicitudes por institución financiera' })
+  @ApiParam({ name: 'id', description: 'ID de la institución financiera' })
   @ApiResponse({ status: 200, description: 'Lista de solicitudes de la institución', type: [SolicitudesInversion] })
-  findAllByInstitucion(@Param('idInstitucion') idInstitucion: string) {
-    return this.solicitudesInversionService.findAllByInstitucion(idInstitucion);
+  findByInstitucion(@Param('id') id: string) {
+    return this.solicitudesInversionService.findByInstitucionFinanciera(id);
   }
 
   @Get(':id')

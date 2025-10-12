@@ -41,4 +41,10 @@ export class InstitucionFinanciera {
 
     @OneToMany(() => SolicitudesInversion, (solicitudes) => solicitudes.institucionFinanciera)
     solicitudesInversion: SolicitudesInversion[];
+
+    @Column('timestamp with time zone', { default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @Column('timestamp with time zone', { default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
 }

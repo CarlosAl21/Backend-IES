@@ -31,21 +31,33 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
 
     // Normalizar a AppRole
     const normalizeToAppRole = (r?: string): AppRole => {
-      if (!r) return isAdminFlag ? 'Admin' : 'User';
-      switch (r) {
-        case 'SuperAdmin':
-        case 'SuperAdministrador':
-        case 'SuperAdmininstrador': // por si hay typo histórico
-          return 'SuperAdmin';
-        case 'Admin':
-        case 'Administrador':
-          return 'Admin';
-        case 'User':
-        case 'Usuario':
-        case 'Revisor':
-        default:
-          return 'User';
+      // si no viene rol explícito, usar flag isAdminFlag como fallback
+      if (!r) return isAdminFlag ? 'Administrador' : 'Usuario';
+
+      const v = String(r).trim().toLowerCase();
+
+      // coincidencias exactas y sinónimos habituales
+      if (['superadmin', 'super-admin', 'super administrador', 'superadministrador', 'superadmininstrador', 'super admin'].includes(v)) {
+        return 'SuperAdministrador';
       }
+      if (['admin', 'administrador', 'administration', 'administrator'].includes(v)) {
+        return 'Administrador';
+      }
+      if (['revisor', 'reviewer', 'rev'].includes(v)) {
+        return 'Revisor';
+      }
+      if (['user', 'usuario', 'usr'].includes(v)) {
+        return 'Usuario';
+      }
+
+      // fallback por palabras clave dentro del string (maneja casos como "ROLE_SUPERADMIN" o "Rol:Administrador")
+      if (v.includes('super')) return 'SuperAdministrador';
+      if (v.includes('admin')) return 'Administrador';
+      if (v.includes('revisor') || v.includes('review')) return 'Revisor';
+      if (v.includes('user') || v.includes('usuario')) return 'Usuario';
+
+      // último recurso: usar isAdminFlag o usuario por defecto
+      return isAdminFlag ? 'Administrador' : 'Usuario';
     };
 
     const userRole = normalizeToAppRole(tokenRole);

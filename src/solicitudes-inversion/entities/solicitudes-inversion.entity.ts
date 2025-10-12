@@ -38,7 +38,7 @@ export class SolicitudesInversion {
     @Column('enum', { enum: ['Pendiente', 'Aprobado', 'Rechazado'], default: 'Pendiente' })
     estado: 'Pendiente' | 'Aprobado' | 'Rechazado';
 
-    @ManyToOne(() => User, user => user.solicitudesInversion)
+    @ManyToOne(() => User, user => user.solicitudesInversion, { eager: true })
     @JoinColumn({ name: 'idUser' })
     user: User;
 
@@ -46,7 +46,7 @@ export class SolicitudesInversion {
     @JoinColumn({ name: 'idInstitucion' })
     institucionFinanciera: InstitucionFinanciera;
 
-    @ManyToOne(() => Inversiones, inversion => inversion.solicitudesInversion)
+    @ManyToOne(() => Inversiones, inversion => inversion.solicitudesInversion, { eager: true })
     @JoinColumn({ name: 'idInversion' })
     inversion: Inversiones;
 

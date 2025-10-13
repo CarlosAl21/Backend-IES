@@ -92,8 +92,12 @@ export class InstitucionFinancieraService {
 
   async update(id: string, updateInstitucionFinancieraDto: UpdateInstitucionFinancieraDto) {
     try {
-      await this.institucionFinancieraRepository.update(id, updateInstitucionFinancieraDto);
-      return await this.institucionFinancieraRepository.findOneBy({ idInstitucionFinanciera: id });
+      const institucionFinanciera = await this.institucionFinancieraRepository.findOneBy({ idInstitucionFinanciera: id });
+      if (!institucionFinanciera) {
+        throw new Error('InstitucionFinanciera not found');
+      }
+      await this.institucionFinancieraRepository.merge(institucionFinanciera, updateInstitucionFinancieraDto);
+      return await this.institucionFinancieraRepository.save(institucionFinanciera);
     } catch (error) {
       console.error('Error updating institucionFinanciera:', error);
       throw new Error('Error updating institucionFinanciera');

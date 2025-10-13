@@ -23,7 +23,7 @@ export class InstitucionFinancieraController {
     schema: {
       type: 'object',
       properties: {
-        nombre: { type: 'string' },
+        name: { type: 'string' },
         mission: { type: 'string' },
         vision: { type: 'string' },
         primaryColor: { type: 'string' },
@@ -76,7 +76,7 @@ export class InstitucionFinancieraController {
     schema: {
       type: 'object',
       properties: {
-        nombre: { type: 'string' },
+        name: { type: 'string' },
         mission: { type: 'string' },
         vision: { type: 'string' },
         primaryColor: { type: 'string' },

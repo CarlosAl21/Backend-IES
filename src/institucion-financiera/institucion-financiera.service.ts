@@ -21,7 +21,7 @@ export class InstitucionFinancieraService {
     try {
       // Mapear DTO a entidad InstitucionFinanciera (nombres distintos)
       const institucionFinanciera = this.institucionFinancieraRepository.create({
-        name: createInstitucionFinancieraDto.nombre,
+        name: createInstitucionFinancieraDto.name,
         mission: createInstitucionFinancieraDto.mission,
         vision: createInstitucionFinancieraDto.vision,
         primaryColor: createInstitucionFinancieraDto.primaryColor,

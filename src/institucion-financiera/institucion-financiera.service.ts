@@ -90,13 +90,31 @@ export class InstitucionFinancieraService {
     }
   }
 
-  async update(id: string, updateInstitucionFinancieraDto: UpdateInstitucionFinancieraDto) {
+  async update(id: string, updateInstitucionFinancieraDto: UpdateInstitucionFinancieraDto, files?: Array<Express.Multer.File>) {
     try {
       const institucionFinanciera = await this.institucionFinancieraRepository.findOneBy({ idInstitucionFinanciera: id });
       if (!institucionFinanciera) {
         throw new Error('InstitucionFinanciera not found');
       }
-      await this.institucionFinancieraRepository.merge(institucionFinanciera, updateInstitucionFinancieraDto);
+
+      // Merge básico de campos (hereda de PartialType)
+      this.institucionFinancieraRepository.merge(institucionFinanciera, updateInstitucionFinancieraDto);
+
+      // Si llegan archivos, subir a Cloudinary y actualizar logo_url (tomamos el primer archivo válido)
+      if (files && files.length > 0) {
+        const uploadPromises = files.map(file => this.cloudinaryService.upload(file));
+        const uploadResults = await Promise.all(uploadPromises);
+
+        // Buscar la primera URL válida
+        const firstUrl = uploadResults
+          .map((r: any) => r?.secure_url)
+          .find((u: string | undefined) => typeof u === 'string' && u.length > 0);
+
+        if (firstUrl) {
+          institucionFinanciera.logo_url = firstUrl;
+        }
+      }
+
       return await this.institucionFinancieraRepository.save(institucionFinanciera);
     } catch (error) {
       console.error('Error updating institucionFinanciera:', error);

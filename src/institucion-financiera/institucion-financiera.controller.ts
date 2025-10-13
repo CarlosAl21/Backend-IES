@@ -71,11 +71,33 @@ export class InstitucionFinancieraController {
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar una institución financiera' })
   @ApiParam({ name: 'id', description: 'ID de la institución a actualizar' })
-  @ApiBody({ type: UpdateInstitucionFinancieraDto })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        nombre: { type: 'string' },
+        mission: { type: 'string' },
+        vision: { type: 'string' },
+        primaryColor: { type: 'string' },
+        secondaryColor: { type: 'string' },
+        files: {
+          type: 'array',
+          items: { type: 'string', format: 'binary' },
+          description: 'Logo o archivos opcionales para actualizar'
+        },
+      },
+    },
+  })
   @ApiResponse({ status: 200, description: 'Institución actualizada', type: InstitucionFinanciera })
   @ApiResponse({ status: 400, description: 'Solicitud inválida' })
-  update(@Param('id') id: string, @Body() updateInstitucionFinancieraDto: UpdateInstitucionFinancieraDto) {
-    return this.institucionFinancieraService.update(id, updateInstitucionFinancieraDto);
+  @UseInterceptors(FilesInterceptor('files'))
+  update(
+    @Param('id') id: string,
+    @Body() updateInstitucionFinancieraDto: UpdateInstitucionFinancieraDto,
+    @UploadedFiles() files?: Array<Express.Multer.File>,
+  ) {
+    return this.institucionFinancieraService.update(id, updateInstitucionFinancieraDto, files);
   }
 
   @Delete(':id')

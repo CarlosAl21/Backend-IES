@@ -26,74 +26,176 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+# Backend-IES
 
-```bash
-$ npm install
+Proyecto backend construido con NestJS para la gestión de entidades relacionadas a créditos, inversiones y usuarios. Incluye autenticación JWT, subida de imágenes a Cloudinary y persistencia con TypeORM (MySQL).
+
+## Descripción
+
+Este repositorio contiene la API del proyecto IES (Institución Educativa / Institución Financiera — según contexto del curso). Proporciona endpoints para:
+
+- Gestión de usuarios (registro, login, actualización)
+- Gestión de créditos
+- Gestión de inversiones
+- Solicitudes de inversión
+- Integración con Cloudinary para gestión de archivos
+- Autenticación y autorización basada en JWT y roles
+
+## Estructura de carpetas
+
+El árbol principal de la aplicación es:
+
+```
+src/
+  app.controller.ts
+  app.module.ts
+  app.service.ts
+  data-source.ts
+  main.ts
+  swagger.ts
+  auth/
+    auth.controller.ts
+    auth.module.ts
+    auth.service.ts
+    jwt-auth.guard.ts
+    jwt.strategy.ts
+    roles.decorator.ts
+    roles.guard.ts
+    dto/
+      login.dto.ts
+      reset-password.dto.ts
+  cloudinary/
+    cloudinary.module.ts
+    cloudinary.provider.ts
+    cloudinary.service.ts
+    cloudinary-response.ts
+  creditos/
+    creditos.controller.ts
+    creditos.module.ts
+    creditos.service.ts
+    dto/
+      create-credito.dto.ts
+      update-credito.dto.ts
+    entities/
+      credito.entity.ts
+  institucion-financiera/
+    institucion-financiera.controller.ts
+    institucion-financiera.module.ts
+    institucion-financiera.service.ts
+    dto/
+      create-institucion-financiera.dto.ts
+      update-institucion-financiera.dto.ts
+    entities/
+      institucion-financiera.entity.ts
+  inversiones/
+    inversiones.controller.ts
+    inversiones.module.ts
+    inversiones.service.ts
+    dto/
+      create-inversione.dto.ts
+      update-inversione.dto.ts
+    entities/
+      inversione.entity.ts
+  solicitudes-inversion/
+    solicitudes-inversion.controller.ts
+    solicitudes-inversion.module.ts
+    solicitudes-inversion.service.ts
+    dto/
+      create-solicitudes-inversion.dto.ts
+      update-solicitudes-inversion.dto.ts
+    entities/
+      solicitudes-inversion.entity.ts
+  user/
+    user.controller.ts
+    user.module.ts
+    user.service.ts
+    dto/
+      create-user.dto.ts
+      update-user.dto.ts
+    entities/
+      user.entity.ts
+test/
+  app.e2e-spec.ts
+  jest-e2e.json
 ```
 
-## Compile and run the project
+## Requisitos
+
+- Node.js 18 o superior
+- npm 9 o superior
+- MySQL (u otra base compatible con TypeORM) o configuración de datasource acorde
+
+## Instalación
+
+1. Clonar el repositorio:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone <repo-url>
+cd Backend-IES
 ```
 
-## Run tests
+2. Instalar dependencias:
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```powershell
+npm install
 ```
 
-## Deployment
+3. Configurar variables de entorno / datasource:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- Editar `src/data-source.ts` o crear un archivo de configuración de entorno con los parámetros de conexión a la base de datos (host, usuario, contraseña, nombre de BD).
+- Configurar `JWT_SECRET` y otros secretos que use la aplicación.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Dependencias principales
 
-```bash
-$ npm install -g mau
-$ mau deploy
+- Framework: `@nestjs/core`, `@nestjs/common`, `@nestjs/platform-express`
+- Base de datos y ORM: `typeorm`, `@nestjs/typeorm`, `mysql`
+- Autenticación: `@nestjs/jwt`, `passport`, `passport-jwt`, `@nestjs/passport`
+- Validación: `class-validator`
+- Subida/almacenamiento: `cloudinary`, `streamifier`
+- Documentación API: `@nestjs/swagger`, `swagger-ui-express`
+
+DevDependencies principales:
+
+- `typescript`, `ts-node`, `jest`, `ts-jest`, `eslint`, `prettier`
+
+Para ver la lista completa de dependencias consulte `package.json`.
+
+## Scripts disponibles
+
+Comandos útiles definidos en `package.json`:
+
+```powershell
+npm run start        # ejecuta la app en producción (con dist previa)
+npm run start:dev    # modo desarrollo con watch
+npm run start:prod   # ejecuta desde dist (producción)
+npm run build        # compila TypeScript
+npm run test         # ejecuta tests unitarios
+npm run test:e2e     # ejecuta tests e2e
+npm run test:cov     # coverage
+npm run lint         # ejecuta eslint y arregla problemas
+npm run format       # formatea con prettier
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Ejemplo: para desarrollo
 
-## Resources
+```powershell
+npm install
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Ejecución local rápida
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+1. Levantar la base de datos (MySQL) y crear la BD indicada en `data-source.ts`.
+2. Ejecutar `npm install`.
+3. Ejecutar `npm run start:dev` y abrir `http://localhost:3000`.
 
-## Support
+La documentación Swagger (si está configurada) suele estar en `http://localhost:3000/api` o según `swagger.ts`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Contribuir
 
-## Stay in touch
+- Abrir issues o PRs para bugs o mejoras.
+- Seguir las convenciones de lint y formateo antes de push.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Contacto
 
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Para dudas, escribe al mantenedor del repositorio o abre un issue.
